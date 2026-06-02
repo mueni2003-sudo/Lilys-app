@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lily's App — Kenya Aviation Study</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0B1F3A;
+    --navy-mid: #132847;
+    --blue: #1464A5;
+    --sky: #2D9CDB;
+    --gold: #F5C542;
+    --white: #F0F4FA;
+    --grey: #8A9BB0;
+    --correct: #27AE60;
+    --wrong: #E74C3C;
+    --card: #162D4A;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--navy);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── BACKGROUND ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -10%, #1464A520 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 90% 80%, #2D9CDB12 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── SCREENS ── */
+  .screen { display: none; position: relative; z-index: 1; }
+  .screen.active { display: block; }
+
+  /* ── HOME ── */
+  #home {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .home-header {
+    padding: 32px 24px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 2px;
+    color: var(--gold);
+  }
+
+  .logo span { color: var(--white); }
+
+  .badge {
+    background: var(--blue);
+    color: var(--white);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .hero {
+    padding: 48px 24px 32px;
+    flex: 1;
+  }
+
+  .hero-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--sky);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(52px, 12vw, 80px);
+    line-height: 0.95;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+  }
+
+  .hero h1 em {
+    font-style: normal;
+    color: var(--gold);
+  }
+
+  .hero p {
+    color: var(--grey);
+    font-size: 15px;
+    line-height: 1.6;
+    max-width: 320px;
+    margin-bottom: 40px;
+  }
+
+  /* ── EXAM SELECTOR ── */
+  .exam-section {
+    padding: 0 24px 48px;
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--grey);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .exam-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .exam-card {
+    background: var(--card);
+    border: 1px solid #1E3A5F;
+    border-radius: 16px;
+    padding: 20px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .exam-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--gold);
+    transform: scaleX(0);
+    transition: transform 0.2s;
+    transform-origin: left;
+  }
+
+  .exam-card:hover::before,
+  .exam-card:active::before { transform: scaleX(1); }
+
+  .exam-card:hover {
+    border-color: var(--sky);
+    transform: translateY(-2px);
+  }
+
+  .exam-card.locked {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .exam-card.locked:hover { transform: none; }
+
+  .exam-icon {
+    font-size: 28px;
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  .exam-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 1px;
+    color: var(--white);
+    margin-bottom: 4px;
+  }
+
+  .exam-desc {
+    font-size: 11px;
+    color: var(--grey);
+    line-height: 1.4;
+  }
+
+  .exam-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--sky);
+    margin-top: 8px;
+  }
+
+  .lock-icon {
+    position: absolute;
+    top: 12px; right: 12px;
+    font-size: 14px;
+    opacity: 0.5;
+  }
+
+  .full-card {
+    grid-column: 1 / -1;
+  }
+
+  /* ── SUBJECTS SCREEN ── */
+  #subjects {
+    min-height: 100vh;
+  }
+
+  .screen-header {
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border-bottom: 1px solid #1E3A5F;
+    position: sticky;
+    top: 0;
+    background: var(--navy);
+    z-index: 10;
+  }
+
+  .back-btn {
+    background: var(--card);
+    border: 1px solid #1E3A5F;
+    color: var(--white);
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+
+  .back-btn:hover { background: var(--blue); }
+
+  .screen-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    letter-spacing: 1px;
+  }
+
+  .screen-subtitle {
+    font-size: 12px;
+    color: var(--grey);
+    margin-left: auto;
+  }
+
+  .subjects-list {
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .subject-item {
+    background: var(--card);
+    border: 1px solid #1E3A5F;
+    border-radius: 14px;
+    padding: 18px 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .subject-item:hover {
+    border-color: var(--sky);
+    transform: translateX(4px);
+  }
+
+  .subject-item.locked {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .subject-item.locked:hover { transform: none; }
+
+  .subject-left { display: flex; align-items: center; gap: 14px; }
+
+  .subject-icon {
+    width: 42px;
+    height: 42px;
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .subject-name {
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 3px;
+  }
+
+  .subject-meta {
+    font-size: 12px;
+    color: var(--grey);
+  }
+
+  .subject-arrow {
+    color: var(--grey);
+    font-size: 18px;
+  }
+
+  /* ── QUIZ SCREEN ── */
+  #quiz { min-height: 100vh; }
+
+  .quiz-header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid #1E3A5F;
+    position: sticky;
+    top: 0;
+    background: var(--navy);
+    z-index: 10;
+  }
+
+  .quiz-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .quiz-info { flex: 1; }
+
+  .quiz-subject {
+    font-size: 12px;
+    color: var(--sky);
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+
+  .quiz-counter {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--grey);
+  }
+
+  .progress-bar {
+    height: 4px;
+    background: #1E3A5F;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--blue), var(--gold));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  .quiz-body {
+    padding: 28px 24px;
+  }
+
+  .question-number {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 2px;
+    margin-bottom: 14px;
+  }
+
+  .question-text {
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1.5;
+    margin-bottom: 32px;
+    color: var(--white);
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .option {
+    background: var(--card);
+    border: 2px solid #1E3A5F;
+    border-radius: 14px;
+    padding: 16px 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-align: left;
+  }
+
+  .option:hover:not(.disabled) {
+    border-color: var(--sky);
+    background: #1A3456;
+  }
+
+  .option.disabled { cursor: not-allowed; }
+
+  .option.correct {
+    border-color: var(--correct);
+    background: #0D2E1A;
+  }
+
+  .option.wrong {
+    border-color: var(--wrong);
+    background: #2E0D0D;
+  }
+
+  .option.reveal-correct {
+    border-color: var(--correct);
+    background: #0D2E1A;
+    opacity: 0.7;
+  }
+
+  .option-letter {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: #1E3A5F;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 1px;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+
+  .option.correct .option-letter { background: var(--correct); }
+  .option.wrong .option-letter { background: var(--wrong); }
+  .option.reveal-correct .option-letter { background: var(--correct); }
+
+  .option-text {
+    font-size: 14px;
+    line-height: 1.4;
+    flex: 1;
+  }
+
+  .option-result {
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  /* ── FEEDBACK ── */
+  .feedback {
+    display: none;
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    animation: slideUp 0.3s ease;
+  }
+
+  .feedback.show { display: block; }
+
+  .feedback.correct-fb {
+    background: #0D2E1A;
+    border: 1px solid var(--correct);
+  }
+
+  .feedback.wrong-fb {
+    background: #2E0D0D;
+    border: 1px solid var(--wrong);
+  }
+
+  .feedback-title {
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 6px;
+  }
+
+  .correct-fb .feedback-title { color: var(--correct); }
+  .wrong-fb .feedback-title { color: var(--wrong); }
+
+  .feedback-text {
+    font-size: 13px;
+    color: var(--grey);
+    line-height: 1.5;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── NEXT BUTTON ── */
+  .next-btn {
+    display: none;
+    width: 100%;
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    color: var(--white);
+    border: none;
+    border-radius: 14px;
+    padding: 18px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+
+  .next-btn.show { display: block; }
+  .next-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px #1464A540; }
+
+  /* ── RESULTS SCREEN ── */
+  #results {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+    text-align: center;
+  }
+
+  .results-icon { font-size: 64px; margin-bottom: 20px; }
+
+  .results-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+
+  .results-subtitle {
+    color: var(--grey);
+    font-size: 14px;
+    margin-bottom: 40px;
+  }
+
+  .score-ring {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    border: 6px solid #1E3A5F;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 40px;
+    position: relative;
+  }
+
+  .score-ring::before {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    border: 6px solid var(--gold);
+    clip-path: inset(0 round 50%);
+  }
+
+  .score-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .score-label {
+    font-size: 12px;
+    color: var(--grey);
+    letter-spacing: 1px;
+  }
+
+  .results-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+    max-width: 320px;
+    margin-bottom: 40px;
+  }
+
+  .stat-box {
+    background: var(--card);
+    border: 1px solid #1E3A5F;
+    border-radius: 14px;
+    padding: 16px;
+  }
+
+  .stat-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    margin-bottom: 4px;
+  }
+
+  .stat-value.green { color: var(--correct); }
+  .stat-value.red { color: var(--wrong); }
+
+  .stat-label { font-size: 12px; color: var(--grey); }
+
+  .results-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    color: var(--white);
+    border: none;
+    border-radius: 14px;
+    padding: 18px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-secondary {
+    background: var(--card);
+    color: var(--white);
+    border: 1px solid #1E3A5F;
+    border-radius: 14px;
+    padding: 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-primary:hover, .btn-secondary:hover { transform: translateY(-2px); }
+
+  /* ── MODE SELECTOR ── */
+  .mode-selector {
+    padding: 20px 24px;
+    display: flex;
+    gap: 10px;
+    border-bottom: 1px solid #1E3A5F;
+  }
+
+  .mode-btn {
+    flex: 1;
+    background: var(--card);
+    border: 1px solid #1E3A5F;
+    color: var(--grey);
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+  }
+
+  .mode-btn.active {
+    background: var(--blue);
+    border-color: var(--sky);
+    color: var(--white);
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .screen.active { animation: fadeIn 0.3s ease; }
+
+  .shimmer {
+    background: linear-gradient(90deg, var(--card) 25%, #1A3456 50%, var(--card) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ HOME ══ -->
+<div id="home" class="screen active">
+  <div class="home-header">
+    <div class="logo">Lily's<span>App</span></div>
+    <div class="badge">🇰🇪 Kenya</div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-label">✈ Aviation Study Platform</div>
+    <h1>Pass Your<br><em>Pilot</em><br>Exams.</h1>
+    <p>Kenya's aviation question bank for PPL, CPL and ATPL. Practice. Learn. Fly.</p>
+  </div>
+
+  <div class="exam-section">
+    <div class="section-label">Choose your exam</div>
+    <div class="exam-cards">
+      <div class="exam-card" onclick="showSubjects('PPL')">
+        <span class="exam-icon">🛩️</span>
+        <div class="exam-name">PPL</div>
+        <div class="exam-desc">Private Pilot Licence</div>
+        <div class="exam-count">110+ questions</div>
+      </div>
+      <div class="exam-card locked">
+        <span class="lock-icon">🔒</span>
+        <span class="exam-icon">✈️</span>
+        <div class="exam-name">CPL</div>
+        <div class="exam-desc">Commercial Pilot</div>
+        <div class="exam-count">Coming soon</div>
+      </div>
+      <div class="exam-card locked">
+        <span class="lock-icon">🔒</span>
+        <span class="exam-icon">🌍</span>
+        <div class="exam-name">ATPL</div>
+        <div class="exam-desc">Airline Transport</div>
+        <div class="exam-count">Coming soon</div>
+      </div>
+      <div class="exam-card locked">
+        <span class="lock-icon">🔒</span>
+        <span class="exam-icon">🔄</span>
+        <div class="exam-name">Conv.</div>
+        <div class="exam-desc">Conversion</div>
+        <div class="exam-count">Coming soon</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SUBJECTS ══ -->
+<div id="subjects" class="screen">
+  <div class="screen-header">
+    <button class="back-btn" onclick="showScreen('home')">←</button>
+    <div>
+      <div class="screen-title" id="subjects-title">PPL Subjects</div>
+    </div>
+    <div class="screen-subtitle" id="subjects-count"></div>
+  </div>
+
+  <div class="subjects-list" id="subjects-list"></div>
+</div>
+
+<!-- ══ QUIZ ══ -->
+<div id="quiz" class="screen">
+  <div class="quiz-header">
+    <div class="quiz-top">
+      <button class="back-btn" onclick="showScreen('subjects')">←</button>
+      <div class="quiz-info">
+        <div class="quiz-subject" id="quiz-subject-name"></div>
+        <div class="quiz-counter" id="quiz-counter"></div>
+      </div>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+  </div>
+
+  <div class="quiz-body">
+    <div class="question-number" id="question-number"></div>
+    <div class="question-text" id="question-text"></div>
+    <div class="options" id="options"></div>
+    <div class="feedback" id="feedback">
+      <div class="feedback-title" id="feedback-title"></div>
+      <div class="feedback-text" id="feedback-text"></div>
+    </div>
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next Question →</button>
+  </div>
+</div>
+
+<!-- ══ RESULTS ══ -->
+<div id="results" class="screen">
+  <div class="results-icon" id="results-icon"></div>
+  <div class="results-title" id="results-title"></div>
+  <div class="results-subtitle" id="results-subtitle"></div>
+  <div class="score-ring">
+    <div class="score-number" id="score-percent"></div>
+    <div class="score-label">SCORE</div>
+  </div>
+  <div class="results-stats">
+    <div class="stat-box">
+      <div class="stat-value green" id="correct-count"></div>
+      <div class="stat-label">Correct</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-value red" id="wrong-count"></div>
+      <div class="stat-label">Wrong</div>
+    </div>
+  </div>
+  <div class="results-actions">
+    <button class="btn-primary" onclick="retryQuiz()">Try Again</button>
+    <button class="btn-secondary" onclick="showScreen('subjects')">← Back to Subjects</button>
+  </div>
+</div>
+
+<script>
+// ══ DATA ══
+const SUBJECTS = {
+  PPL: [
+    { id: 'air-law', name: 'Air Law', icon: '⚖️', desc: 'KCAA rules, airspace, licences', count: 110, locked: false },
+    { id: 'meteorology', name: 'Meteorology', icon: '🌦️', desc: 'Weather, METAR, TAF', count: 0, locked: true },
+    { id: 'navigation', name: 'Navigation', icon: '🧭', desc: 'Charts, VOR, dead reckoning', count: 0, locked: true },
+    { id: 'agk', name: 'Aircraft General Knowledge', icon: '✈️', desc: 'Systems, instruments, engines', count: 0, locked: true },
+    { id: 'performance', name: 'Flight Performance & Planning', icon: '📊', desc: 'W&B, fuel, performance charts', count: 0, locked: true },
+    { id: 'human', name: 'Human Performance', icon: '🧠', desc: 'Hypoxia, fatigue, stress', count: 0, locked: true },
+  ]
+};
+
+const QUESTIONS = {
+  'air-law': [
+    { q: "Which of the following documents have to be on board for an international flight?", a: ["Certificate of aircraft registration, Certificate of airworthiness, Airplane logbook, Appropriate papers for crew", "Certificate of aircraft registration, Certificate of airworthiness, Airworthiness review certificate, EASA Form-1", "Certificate of aircraft registration, Certificate of airworthiness, Airplane logbook, Technical logbook", "Certificate of airworthiness, EASA Form-1, Airplane logbook, Technical logbook, Appropriate papers for crew"], correct: 1 },
+    { q: "Which area could be crossed with certain restrictions?", a: ["Dangerous area", "Restricted area", "Prohibited area", "No-fly zone"], correct: 1 },
+    { q: "Where can the type of restriction for a restricted airspace be found?", a: ["AIC", "AIP", "ICAO chart 1:500,000", "NOTAM"], correct: 1 },
+    { q: "What is the definition of 'scheduled flights'?", a: ["Flights which transport persons or objects periodically and publicly on certain routes", "Flights with a flight plan", "Flights which cross national borders", "Flights which require flight preparation and route planning"], correct: 0 },
+    { q: "What is the status of rules and procedures created by the EASA? (e.g. Part-FCL, Part-MED)", a: ["They are part of EU regulation and legally binding to all EU member states", "They are not legally binding, they only serve as a guide", "They have the same status as ICAO Annexes", "Only after ratification by individual EU member states they are legally binding"], correct: 0 },
+    { q: "Which validity does the 'Certificate of Airworthiness' have?", a: ["6 months", "12 months", "Unlimited", "12 years"], correct: 2 },
+    { q: "What is the meaning of the abbreviation 'ARC'?", a: ["Airspace Restriction Criteria", "Airworthiness Recurring Control", "Airworthiness Review Certificate", "Airspace Rulemaking Committee"], correct: 2 },
+    { q: "The 'Certificate of Airworthiness' is issued by the state...", a: ["in which the aircraft is registered.", "in which the aircraft is constructed.", "of the residence of the owner.", "in which the airworthiness review is done."], correct: 0 },
+    { q: "A pilot license issued in accordance with ICAO Annex 1 is valid in...", a: ["those countries that have accepted this license on application.", "the country where the license was issued.", "the country where the license was acquired.", "all ICAO countries."], correct: 3 },
+    { q: "What is the subject of ICAO Annex 1?", a: ["Air traffic services", "Rules of the air", "Operation of aircraft", "Flight crew licensing"], correct: 3 },
+    { q: "What is the period of validity of a private pilot license (PPL)?", a: ["24 months", "48 months", "60 months", "Unlimited"], correct: 3 },
+    { q: "What is the minimum age to obtain a private pilot license?", a: ["18 years", "17 years", "21 years", "16 years"], correct: 1 },
+    { q: "What is the meaning of the abbreviation 'SERA'?", a: ["Selective Radar Altimeter", "Standardized European Rules of the Air", "Specialized Radar Approach", "Standard European Routes of the Air"], correct: 1 },
+    { q: "What is the meaning of the abbreviation 'TRA'?", a: ["Transponder Area", "Temporary Reserved Airspace", "Terminal Area", "Temporary Radar Routing Area"], correct: 1 },
+    { q: "What has to be considered when entering an RMZ?", a: ["To permanently monitor the radio and if possible establish radio contact", "Transponder switched on Mode C and squawk 7000", "Obtain a clearance from the local aviation authority", "Obtain a clearance to enter this area"], correct: 0 },
+    { q: "What condition has to be met during a Special VFR flight?", a: ["Visual reference to the terrain", "A minimum distance to clouds of 2000 m", "Speed not above 115 kt IAS", "At least 500 m ground visibility"], correct: 0 },
+    { q: "What has to be done before entering a TMZ?", a: ["File a flight plan before the flight", "Switch on the transponder and activate mode A and C or mode S", "Request a clearance before entering", "Switch on the transponder, activate mode A, and squawk IDENT"], correct: 1 },
+    { q: "What is the meaning of an area marked as 'TMZ'?", a: ["Traffic Management Zone", "Touring Motorglider Zone", "Transponder Mandatory Zone", "Transportation Management Zone"], correct: 2 },
+    { q: "What is the meaning of the abbreviation 'IFR'?", a: ["Commercial Flight Rules", "Instrument Meteorological Conditions", "Bad Weather Flight Rules", "Instrument Flight Rules"], correct: 3 },
+    { q: "What is the meaning of the abbreviation 'VMC'?", a: ["Variable meteorological conditions", "Instrument flight conditions", "Visual meteorological conditions", "Visual flight rules"], correct: 2 },
+    { q: "What is the meaning of the abbreviation 'IMC'?", a: ["Instrument flight rules", "Instrument meteorological conditions", "Inter meteorological conditions", "Instrument conditions"], correct: 1 },
+    { q: "Two engine-driven aircraft are flying on crossing courses at the same altitude. Which one has to divert?", a: ["Both have to divert to the left", "The heavier one has to climb", "The lighter one has to climb", "Both have to divert to the right"], correct: 3 },
+    { q: "While taxiing, two engine-driven aeroplanes face each other on opposite courses. Which one has to divert?", a: ["Both have to divert to the left", "The heavier one has to divert to the right", "Both have to divert to the right", "The heavier one has to divert to the left"], correct: 2 },
+    { q: "What is the meaning of an area marked as 'TMZ'?", a: ["Traffic Management Zone", "Touring Motorglider Zone", "Transponder Mandatory Zone", "Transportation Management Zone"], correct: 2 },
+    { q: "Which distances to clouds have to be maintained during a VFR flight in airspaces C, D and E?", a: ["1500 m horizontally, 1000 ft vertically", "1500 m horizontally, 1000 m vertically", "1000 m horizontally, 300 m vertically", "1000 m horizontally, 1500 ft vertically"], correct: 0 },
+    { q: "The minimum flight visibility at 5000 ft MSL in airspace B for VFR flights is...", a: ["1500 m", "3000 m", "8000 m", "5000 m"], correct: 2 },
+    { q: "What is the minimum flight visibility in airspace C for a VFR aircraft at FL110?", a: ["8000 m", "3000 m", "1500 m", "5000 m"], correct: 0 },
+    { q: "What are the minimum distances to clouds for a VFR flight in airspace B?", a: ["Horizontally 1000 m, vertically 300 m", "Horizontally 1000 m, vertically 1500 ft", "Horizontally 1500 m, vertically 1000 m", "Horizontally 1500 m, vertically 300 m"], correct: 0 },
+    { q: "What is the minimum flight visibility in airspace C below FL100 for a VFR aircraft?", a: ["5 km", "1.5 km", "8 km", "10 km"], correct: 0 },
+    { q: "What is the minimum flight visibility in airspace C at and above FL100 for a VFR aircraft?", a: ["10 km", "5 km", "1.5 km", "8 km"], correct: 3 },
+    { q: "The altimeter is switched from local QNH to 1013.25 hPa...", a: ["when descending below FL 100.", "when climbing above the transition altitude.", "at 4000 ft.", "at the decision height."], correct: 1 },
+    { q: "During a flight at FL 80, the altimeter setting has to be...", a: ["1013.25 hPa.", "local QFE.", "1030.25 hPa.", "local QNH."], correct: 0 },
+    { q: "What is the purpose of the semi-circular rule?", a: ["To fly without a filed flight plan in prescribed zones", "To avoid collisions by suspending turning manoeuvres", "To allow safe climbing or descending in a holding pattern", "To avoid collisions by reducing probability of opposing traffic at the same altitude"], correct: 3 },
+    { q: "Which transponder code indicates a loss of radio communication?", a: ["7000", "2000", "7600", "7700"], correct: 2 },
+    { q: "Which transponder code should be set during a radio failure without any request?", a: ["7500", "7600", "7700", "7000"], correct: 1 },
+    { q: "Which transponder code has to be set unrequested during an emergency?", a: ["7700", "7600", "7500", "7000"], correct: 0 },
+    { q: "The 'IDENT' button on the transponder has to be used...", a: ["only once after a direct request by ATC.", "without request before entering airspace C, D or E.", "without request before entering a CTA.", "three times to indicate a radio failure."], correct: 0 },
+    { q: "Which air traffic service is responsible for the safe conduct of flights?", a: ["FIS (flight information service)", "ATC (air traffic control)", "AIS (aeronautical information service)", "ALR (alerting service)"], correct: 1 },
+    { q: "Air traffic control service is conducted by which services?", a: ["TWR, APP, ACC", "FIS, AIS, AFS", "APP, ACC, FIS", "ALR, SAR, TWR"], correct: 0 },
+    { q: "Which answer is correct with regard to separation in airspace E?", a: ["VFR traffic is separated from VFR and IFR traffic", "IFR traffic is separated only from VFR traffic", "VFR traffic is not separated from any other traffic", "VFR traffic is separated only from IFR traffic"], correct: 2 },
+    { q: "Which air traffic services can be expected within an FIR?", a: ["ATC and FIS", "ATC and AIS", "FIS and ALR", "AIS and SAR"], correct: 2 },
+    { q: "What is the meaning of the abbreviation 'AIREP'?", a: ["Aeronautical instrument requirement report", "Aeronautical information report", "Aircraft report", "Automatic identification report"], correct: 2 },
+    { q: "Which are the different parts of the Aeronautical Information Publication (AIP)?", a: ["GEN, COM, MET", "GEN, ENR, AD", "GEN, MET, RAC", "GEN, AGA, COM"], correct: 1 },
+    { q: "A Pre-Flight Information Bulletin (PIB) is a presentation of current...", a: ["ICAO information of operational significance prepared after the flight.", "NOTAM information of operational significance prepared prior to flight.", "AIP information of operational significance prepared prior to flight.", "AIC information of operational significance prepared after the flight."], correct: 1 },
+    { q: "The term 'aerodrome elevation' is defined as...", a: ["the lowest point of the landing area.", "the highest point of the landing area.", "the highest point of the apron.", "the average value of the height of the manoeuvring area."], correct: 1 },
+    { q: "What information is provided by a SNOWTAM?", a: ["Notifications of runway/taxiway/apron status with respect to snow, ice, and standing water", "Information which cannot be listed in the AIP", "Special NOTAM, especially urgent NOTAM information", "Special information on recent changes on ICAO maps"], correct: 0 },
+    { q: "What does the reported runway condition 'WET' mean?", a: ["Surface is soaked but no significant patches of standing water", "Runway is clear of water, ice, and snow", "A large part of the surface is flooded", "Some water patches are visible"], correct: 0 },
+    { q: "What does the reported runway condition 'DAMP' mean?", a: ["Runway is clear of water, ice, and snow", "Wet surface but no significant puddles", "A large part of the surface is flooded", "Change of colour on the surface due to moisture"], correct: 3 },
+    { q: "What does 'WATER PATCHES' mean regarding the reported runway condition?", a: ["Wet surface but no significant patches are visible", "Runway is clear of water, ice, and snow", "A large part of the surface is flooded", "Patches of standing water are visible"], correct: 3 },
+    { q: "What is the meaning of a flashing red light signal directed to an aircraft in flight?", a: ["Return for landing, followed by steady green", "Airport unsafe, do not land", "Cleared to land", "Give way to other aircraft and continue circling"], correct: 1 },
+    { q: "What is the meaning of a flashing green light signal directed to an aircraft in flight?", a: ["Return for landing, followed by steady green", "Give way to other aircraft and continue circling", "Cleared to land", "Airport unsafe, do not land"], correct: 2 },
+    { q: "What is the meaning of a steady green light signal directed to an aircraft in flight?", a: ["Return for landing, followed by steady green", "Airport unsafe, do not land", "Cleared to land", "Give way to other aircraft and continue circling"], correct: 2 },
+    { q: "What is the meaning of a flashing white light directed to an aircraft on the ground?", a: ["Cleared for take-off", "Return to starting point", "Cleared to taxi", "Clear the taxiway / runway"], correct: 1 },
+    { q: "What is the meaning of a flashing red light directed to an aircraft on the ground?", a: ["Cleared to taxi", "Immediately taxi clear of runway in use", "Return to starting point", "Cleared for take-off"], correct: 1 },
+    { q: "What is the meaning of a flashing green light directed to an aircraft on the ground?", a: ["Cleared for take-off", "Cleared to taxi", "Land at this airport and proceed to the apron", "Return to starting point"], correct: 1 },
+    { q: "What is the meaning of a steady red light directed to an aircraft on the ground?", a: ["Return to starting point", "Land at this airport and proceed to apron", "Stop", "Clear the taxiway / runway"], correct: 2 },
+    { q: "Of what shape is a landing direction indicator?", a: ["A straight arrow", "An angled arrow", "T", "L"], correct: 2 },
+    { q: "How are two parallel runways designated?", a: ["Left runway gets suffix L, right remains unchanged", "Left gets suffix -1, right -2", "Left remains unchanged, right designator increased by 1", "Left runway gets suffix L, right runway R"], correct: 3 },
+    { q: "According to ICAO Annex 14, what is the colour marking of a runway?", a: ["Yellow", "Blue", "Green", "White"], correct: 3 },
+    { q: "Which runway designators are correct for 2 parallel runways?", a: ["18 and 18-2", "26 and 26R", "06L and 06R", "24 and 25"], correct: 2 },
+    { q: "What is a 'PAPI' (Precision Approach Path Indicator)?", a: ["An instrumental aid providing guidance for correct approach", "A visual aid for correct departure track", "A visual aid to help tower controller acquire correct approach", "A visual aid to help pilot acquire and maintain correct glidepath"], correct: 3 },
+    { q: "An aerodrome beacon (ABN) is a...", a: ["rotating beacon at airport to indicate location to pilots from the air.", "rotating beacon at beginning of final approach.", "fixed beacon at airport to indicate location to pilots from the air.", "rotating beacon at airport to indicate location to pilots from the ground."], correct: 0 },
+    { q: "Which is the colour of runway edge lights?", a: ["Red", "White", "Blue", "Green"], correct: 1 },
+    { q: "Which is the colour of runway end lights?", a: ["White", "Red", "Blue", "Green"], correct: 1 },
+    { q: "What is the meaning of 'DETRESFA'?", a: ["Alerting phase", "Distress phase", "Rescue phase", "Uncertainty phase"], correct: 1 },
+    { q: "Who provides search and rescue service?", a: ["International approved organisations only", "Both military and civil organisations", "Only civil organisations", "Only military organisations"], correct: 1 },
+    { q: "Which meaning does the search and rescue signal 'X' have when displayed on the ground?", a: ["Unable to proceed", "Need food and water", "Indicates the direction to proceed", "Send a doctor"], correct: 3 },
+    { q: "Which meaning does the search and rescue signal 'V' have when displayed on the ground?", a: ["Indicates the direction to proceed", "Serious injuries, send a doctor", "Unable to proceed", "Need help"], correct: 3 },
+    { q: "How can a pilot confirm a search and rescue signal on the ground in flight?", a: ["Push the rudder in both directions multiple times", "Deploy and retract the landing flaps multiple times", "Rock the wings", "Fly in a parabolic flight path multiple times"], correct: 2 },
+    { q: "What are the three categories regarding aircraft occurrences?", a: ["Incident, Serious incident, Accident", "Event, Crash, Disaster", "Happening, Event, Serious event", "Event, Serious event, Accident"], correct: 0 },
+    { q: "What is the primary purpose of an aircraft accident investigation?", a: ["To work for the public prosecutor", "To determine the guilty party and draw legal consequences", "To identify reasons and work out safety recommendations", "To clarify questions of liability for passenger compensation"], correct: 2 },
+  ]
+};
+
+// ══ STATE ══
+let currentExam = '';
+let currentSubject = '';
+let currentQuestions = [];
+let currentIndex = 0;
+let score = 0;
+let answered = false;
+let quizMode = 'all'; // all or random20
+
+// ══ NAVIGATION ══
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function showSubjects(exam) {
+  currentExam = exam;
+  const subjects = SUBJECTS[exam];
+  document.getElementById('subjects-title').textContent = exam + ' Subjects';
+  document.getElementById('subjects-count').textContent = subjects.filter(s => !s.locked).length + ' available';
+
+  const list = document.getElementById('subjects-list');
+  list.innerHTML = subjects.map(s => `
+    <div class="subject-item ${s.locked ? 'locked' : ''}" ${!s.locked ? `onclick="startQuiz('${s.id}', '${s.name}')"` : ''}>
+      <div class="subject-left">
+        <div class="subject-icon">${s.icon}</div>
+        <div>
+          <div class="subject-name">${s.name}</div>
+          <div class="subject-meta">${s.locked ? '🔒 Coming soon' : s.count + ' questions · ' + s.desc}</div>
+        </div>
+      </div>
+      ${!s.locked ? '<div class="subject-arrow">›</div>' : ''}
+    </div>
+  `).join('');
+
+  showScreen('subjects');
+}
+
+function startQuiz(subjectId, subjectName) {
+  currentSubject = subjectName;
+  let qs = [...(QUESTIONS[subjectId] || [])];
+
+  // Shuffle
+  for (let i = qs.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [qs[i], qs[j]] = [qs[j], qs[i]];
+  }
+
+  currentQuestions = quizMode === 'random20' ? qs.slice(0, 20) : qs;
+  currentIndex = 0;
+  score = 0;
+
+  document.getElementById('quiz-subject-name').textContent = subjectName;
+  showScreen('quiz');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  answered = false;
+  const q = currentQuestions[currentIndex];
+  const total = currentQuestions.length;
+
+  document.getElementById('question-number').textContent = `QUESTION ${currentIndex + 1} OF ${total}`;
+  document.getElementById('quiz-counter').textContent = `${currentIndex + 1} / ${total}`;
+  document.getElementById('question-text').textContent = q.q;
+  document.getElementById('progress-fill').style.width = ((currentIndex / total) * 100) + '%';
+
+  const letters = ['A', 'B', 'C', 'D'];
+  document.getElementById('options').innerHTML = q.a.map((opt, i) => `
+    <button class="option" onclick="selectAnswer(${i})" id="opt-${i}">
+      <div class="option-letter">${letters[i]}</div>
+      <div class="option-text">${opt}</div>
+      <div class="option-result" id="result-${i}"></div>
+    </button>
+  `).join('');
+
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback';
+  fb.classList.remove('show');
+
+  document.getElementById('next-btn').classList.remove('show');
+}
+
+function selectAnswer(index) {
+  if (answered) return;
+  answered = true;
+
+  const q = currentQuestions[currentIndex];
+  const isCorrect = index === q.correct;
+  if (isCorrect) score++;
+
+  // Style options
+  document.querySelectorAll('.option').forEach((opt, i) => {
+    opt.classList.add('disabled');
+    if (i === q.correct) {
+      opt.classList.add(i === index ? 'correct' : 'reveal-correct');
+      document.getElementById(`result-${i}`).textContent = '✓';
+    } else if (i === index && !isCorrect) {
+      opt.classList.add('wrong');
+      document.getElementById(`result-${i}`).textContent = '✗';
+    }
+  });
+
+  // Feedback
+  const fb = document.getElementById('feedback');
+  document.getElementById('feedback-title').textContent = isCorrect ? '✅ Correct!' : '❌ Wrong';
+  document.getElementById('feedback-text').textContent = isCorrect
+    ? 'Well done! Keep going.'
+    : `The correct answer is ${['A','B','C','D'][q.correct]}: ${q.a[q.correct]}`;
+  fb.className = `feedback ${isCorrect ? 'correct-fb' : 'wrong-fb'} show`;
+
+  // Next button
+  const nextBtn = document.getElementById('next-btn');
+  nextBtn.classList.add('show');
+  nextBtn.textContent = currentIndex + 1 >= currentQuestions.length ? 'See Results 🏁' : 'Next Question →';
+}
+
+function nextQuestion() {
+  currentIndex++;
+  if (currentIndex >= currentQuestions.length) {
+    showResults();
+  } else {
+    renderQuestion();
+    window.scrollTo(0, 0);
+  }
+}
+
+function showResults() {
+  const total = currentQuestions.length;
+  const pct = Math.round((score / total) * 100);
+
+  document.getElementById('score-percent').textContent = pct + '%';
+  document.getElementById('correct-count').textContent = score;
+  document.getElementById('wrong-count').textContent = total - score;
+
+  let icon, title, subtitle;
+  if (pct >= 75) {
+    icon = '🏆'; title = 'WELL DONE!'; subtitle = 'Above pass mark — keep it up!';
+  } else if (pct >= 50) {
+    icon = '📚'; title = 'KEEP STUDYING'; subtitle = 'Almost there — review and retry.';
+  } else {
+    icon = '✈️'; title = 'KEEP GOING'; subtitle = 'Every pilot starts somewhere!';
+  }
+
+  document.getElementById('results-icon').textContent = icon;
+  document.getElementById('results-title').textContent = title;
+  document.getElementById('results-subtitle').textContent = subtitle;
+
+  showScreen('results');
+}
+
+function retryQuiz() {
+  const subjectId = Object.keys(QUESTIONS).find(k => QUESTIONS[k].length > 0) || 'air-law';
+  startQuiz(subjectId, currentSubject);
+}
+</script>
+</body>
+</html>
