@@ -1,2 +1,482 @@
 # Lilys-app
 Kenya aviation study app 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Lily's App — Kenya Aviation Study</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --navy:#0B1F3A;--navy2:#0F2647;--card:#142C4A;--card2:#1A3456;
+  --blue:#1464A5;--sky:#2D9CDB;--gold:#F5C518;--white:#EEF4FF;
+  --grey:#7A90A8;--green:#27AE60;--red:#E74C3C;--border:#1E3A5F;
+}
+html,body{height:100%;background:var(--navy);color:var(--white);font-family:'DM Sans',sans-serif;overflow:hidden;}
+/* SCREENS */
+.screen{position:fixed;inset:0;overflow-y:auto;overflow-x:hidden;display:none;flex-direction:column;background:var(--navy);}
+.screen.active{display:flex;animation:fadeIn .25s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── HOME ── */
+#home{background:linear-gradient(160deg,#0B1F3A 0%,#0F2647 50%,#0B1F3A 100%);}
+.home-bg{position:absolute;inset:0;background:radial-gradient(ellipse 100% 60% at 50% 0%,#1464A518 0%,transparent 70%);pointer-events:none;}
+.home-inner{position:relative;z-index:1;padding:0 0 40px;min-height:100%;display:flex;flex-direction:column;}
+.home-nav{display:flex;align-items:center;justify-content:space-between;padding:52px 24px 0;}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:3px;color:var(--gold);}
+.logo span{color:var(--white);}
+.kenya-badge{background:#1A3456;border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:11px;font-weight:600;letter-spacing:1px;color:var(--grey);}
+.hero-section{padding:44px 24px 36px;}
+.hero-eyebrow{font-family:'DM Mono',monospace;font-size:10px;color:var(--sky);letter-spacing:4px;text-transform:uppercase;margin-bottom:18px;}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(60px,16vw,90px);line-height:.92;letter-spacing:1px;margin-bottom:22px;}
+.hero-title em{font-style:normal;color:var(--gold);display:block;}
+.hero-sub{color:var(--grey);font-size:14px;line-height:1.65;max-width:300px;}
+.exam-section{padding:0 24px 32px;}
+.section-eyebrow{font-family:'DM Mono',monospace;font-size:10px;color:var(--grey);letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;}
+.exam-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.exam-card{background:var(--card);border:1.5px solid var(--border);border-radius:18px;padding:20px 16px 18px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
+.exam-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2.5px;background:linear-gradient(90deg,var(--blue),var(--gold));transform:scaleX(0);transform-origin:left;transition:transform .25s;}
+.exam-card:active::after,.exam-card:hover::after{transform:scaleX(1);}
+.exam-card:active,.exam-card:hover{border-color:var(--sky);transform:scale(0.98);}
+.exam-card.locked{opacity:.38;cursor:not-allowed;}
+.exam-card.locked:active,.exam-card.locked:hover{transform:none;border-color:var(--border);}
+.exam-emoji{font-size:30px;margin-bottom:12px;display:block;}
+.exam-title{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1px;margin-bottom:3px;}
+.exam-sub{font-size:11px;color:var(--grey);line-height:1.4;margin-bottom:10px;}
+.exam-pill{display:inline-block;background:#1A3456;border:1px solid var(--border);border-radius:8px;padding:3px 8px;font-family:'DM Mono',monospace;font-size:10px;color:var(--sky);}
+.lock-dot{position:absolute;top:14px;right:14px;font-size:13px;opacity:.6;}
+.bundle-banner{margin:0 24px;background:linear-gradient(135deg,#1A3456,#0F2647);border:1px solid var(--border);border-radius:16px;padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.bundle-text{font-size:13px;font-weight:600;margin-bottom:3px;}
+.bundle-sub{font-size:11px;color:var(--grey);}
+.bundle-btn{background:var(--gold);color:#0B1F3A;border:none;border-radius:10px;padding:10px 16px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;}
+
+/* ── SUBJECTS ── */
+#subjects{}
+.sticky-header{position:sticky;top:0;z-index:20;background:var(--navy);border-bottom:1px solid var(--border);padding:16px 20px;display:flex;align-items:center;gap:14px;}
+.back-btn{width:38px;height:38px;background:var(--card);border:1.5px solid var(--border);border-radius:11px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:var(--white);transition:background .2s;flex-shrink:0;}
+.back-btn:active{background:var(--blue);}
+.header-info{flex:1;}
+.header-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;line-height:1;}
+.header-sub{font-size:11px;color:var(--grey);margin-top:2px;}
+.subjects-list{padding:16px 20px;display:flex;flex-direction:column;gap:10px;padding-bottom:40px;}
+.subject-row{background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:16px 18px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:all .18s;}
+.subject-row:active,.subject-row:hover{border-color:var(--sky);background:var(--card2);}
+.subject-row.locked{opacity:.4;cursor:not-allowed;}
+.subject-row.locked:active{border-color:var(--border);background:var(--card);}
+.subj-icon{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.subj-icon.unlocked{background:linear-gradient(135deg,var(--blue),var(--sky));}
+.subj-icon.locked-icon{background:var(--card2);border:1px solid var(--border);}
+.subj-body{flex:1;min-width:0;}
+.subj-name{font-weight:600;font-size:15px;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.subj-meta{font-size:12px;color:var(--grey);}
+.subj-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
+.subj-count{font-family:'DM Mono',monospace;font-size:11px;color:var(--sky);}
+.subj-arrow{color:var(--grey);font-size:20px;}
+.coming-badge{background:#1A3456;border:1px solid var(--border);border-radius:6px;padding:2px 7px;font-size:10px;color:var(--grey);}
+
+/* ── QUIZ SCREEN ── */
+#quiz{}
+.quiz-header{position:sticky;top:0;z-index:20;background:var(--navy);border-bottom:1px solid var(--border);padding:14px 20px;}
+.quiz-top{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.quiz-meta{flex:1;}
+.quiz-subject-label{font-size:11px;color:var(--sky);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:1px;}
+.quiz-counter{font-family:'DM Mono',monospace;font-size:12px;color:var(--grey);}
+.score-display{font-family:'DM Mono',monospace;font-size:13px;color:var(--gold);font-weight:500;}
+.progress-track{height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--blue),var(--gold));border-radius:2px;transition:width .35s ease;}
+.live-score-bar{margin-top:8px;display:flex;align-items:center;gap:8px;}
+.live-score-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--grey);white-space:nowrap;}
+.live-score-track{flex:1;height:5px;background:var(--border);border-radius:3px;overflow:visible;position:relative;}
+.live-score-fill{height:100%;border-radius:3px;transition:width .35s ease;}
+.pass-line{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--grey);border-radius:1px;left:70%;}
+.pass-line::after{content:'70%';position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-family:'DM Mono',monospace;font-size:8px;color:var(--grey);white-space:nowrap;letter-spacing:1px;}
+
+.quiz-body{padding:28px 22px 32px;flex:1;display:flex;flex-direction:column;}
+.q-number{font-family:'DM Mono',monospace;font-size:10px;color:var(--gold);letter-spacing:3px;text-transform:uppercase;margin-bottom:16px;}
+.q-text{font-size:17px;font-weight:500;line-height:1.55;margin-bottom:30px;color:var(--white);flex-shrink:0;}
+.options{display:flex;flex-direction:column;gap:11px;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:15px;padding:15px 18px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all .18s;text-align:left;width:100%;}
+.opt:active:not(.done),.opt:hover:not(.done){border-color:var(--sky);background:var(--card2);}
+.opt.done{cursor:default;}
+.opt.correct{border-color:var(--green);background:#0A2A18;}
+.opt.wrong{border-color:var(--red);background:#2A0A0A;}
+.opt.show-correct{border-color:var(--green);background:#0A2A18;opacity:.75;}
+.opt-letter{width:34px;height:34px;border-radius:9px;background:#1A3456;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:1px;flex-shrink:0;transition:background .18s;}
+.opt.correct .opt-letter{background:var(--green);}
+.opt.wrong .opt-letter{background:var(--red);}
+.opt.show-correct .opt-letter{background:var(--green);}
+.opt-text{font-size:14px;line-height:1.45;flex:1;}
+.opt-check{font-size:18px;flex-shrink:0;}
+.feedback-box{margin-top:20px;border-radius:14px;padding:15px 18px;display:none;}
+.feedback-box.show{display:block;animation:fadeIn .2s ease;}
+.feedback-box.ok{background:#0A2A18;border:1px solid var(--green);}
+.feedback-box.nope{background:#2A0A0A;border:1px solid var(--red);}
+.fb-title{font-weight:700;font-size:14px;margin-bottom:5px;}
+.ok .fb-title{color:var(--green);}
+.nope .fb-title{color:var(--red);}
+.fb-body{font-size:13px;color:var(--grey);line-height:1.5;}
+.next-btn{display:none;margin-top:22px;width:100%;background:linear-gradient(135deg,var(--blue),var(--sky));color:var(--white);border:none;border-radius:14px;padding:17px;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;cursor:pointer;transition:all .2s;letter-spacing:.3px;}
+.next-btn.show{display:block;animation:fadeIn .2s ease;}
+.next-btn:active{transform:scale(.98);}
+
+/* ── RESULTS ── */
+#results{align-items:center;justify-content:flex-start;padding:0;}
+.results-inner{width:100%;padding:40px 24px 60px;display:flex;flex-direction:column;align-items:center;}
+.results-back{align-self:flex-start;margin-bottom:24px;}
+.result-emoji{font-size:60px;margin-bottom:16px;}
+.result-title{font-family:'Bebas Neue',sans-serif;font-size:44px;letter-spacing:2px;margin-bottom:6px;text-align:center;}
+.result-sub{font-size:13px;color:var(--grey);margin-bottom:36px;text-align:center;}
+.score-circle{width:160px;height:160px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:16px;position:relative;}
+.score-circle svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg);}
+.score-circle .track{fill:none;stroke:var(--border);stroke-width:8;}
+.score-circle .fill{fill:none;stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset .6s ease;}
+.score-circle .pass-mark{fill:none;stroke:var(--grey);stroke-width:2;stroke-dasharray:6 4;opacity:.6;}
+.pass-label{font-size:10px;color:var(--grey);letter-spacing:1px;margin-bottom:24px;display:flex;align-items:center;gap:6px;}
+.pass-dot{width:8px;height:8px;border-radius:50%;background:var(--grey);}
+.pass-dot.passed{background:var(--green);}
+.score-pct{font-family:'Bebas Neue',sans-serif;font-size:48px;color:var(--gold);line-height:1;}
+.score-lbl{font-size:11px;color:var(--grey);letter-spacing:2px;}
+.stats-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:300px;margin-bottom:36px;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center;}
+.stat-n{font-family:'Bebas Neue',sans-serif;font-size:36px;}
+.stat-n.g{color:var(--green);}
+.stat-n.r{color:var(--red);}
+.stat-label{font-size:11px;color:var(--grey);}
+.result-actions{display:flex;flex-direction:column;gap:10px;width:100%;max-width:300px;}
+.btn-primary{background:linear-gradient(135deg,var(--blue),var(--sky));color:var(--white);border:none;border-radius:14px;padding:17px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;width:100%;}
+.btn-secondary{background:var(--card);color:var(--white);border:1.5px solid var(--border);border-radius:14px;padding:15px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;width:100%;}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div id="home" class="screen active">
+  <div class="home-bg"></div>
+  <div class="home-inner">
+    <div class="home-nav">
+      <div class="logo">Lily's<span>App</span></div>
+      <div class="kenya-badge">🇰🇪 Kenya</div>
+    </div>
+    <div class="hero-section">
+      <div class="hero-eyebrow">✈ Aviation Study Platform</div>
+      <h1 class="hero-title">Pass Your<em>Pilot</em>Exams.</h1>
+      <p class="hero-sub">Kenya's aviation question bank. Practice by subject, track your score, and fly with confidence.</p>
+    </div>
+    <div class="exam-section">
+      <div class="section-eyebrow">Choose your exam</div>
+      <div class="exam-grid">
+        <div class="exam-card" onclick="goSubjects('PPL')">
+          <span class="exam-emoji">🛩️</span>
+          <div class="exam-title">PPL</div>
+          <div class="exam-sub">Private Pilot Licence</div>
+          <span class="exam-pill">110+ Qs</span>
+        </div>
+        <div class="exam-card locked">
+          <span class="lock-dot">🔒</span>
+          <span class="exam-emoji">✈️</span>
+          <div class="exam-title">CPL</div>
+          <div class="exam-sub">Commercial Pilot</div>
+          <span class="exam-pill">Coming soon</span>
+        </div>
+        <div class="exam-card locked">
+          <span class="lock-dot">🔒</span>
+          <span class="exam-emoji">🌍</span>
+          <div class="exam-title">ATPL</div>
+          <div class="exam-sub">Airline Transport</div>
+          <span class="exam-pill">Coming soon</span>
+        </div>
+        <div class="exam-card locked">
+          <span class="lock-dot">🔒</span>
+          <span class="exam-emoji">🔄</span>
+          <div class="exam-title">Conv.</div>
+          <div class="exam-sub">Conversion</div>
+          <span class="exam-pill">Coming soon</span>
+        </div>
+      </div>
+    </div>
+    <div class="bundle-banner">
+      <div>
+        <div class="bundle-text">📦 PPL Bundle Deal</div>
+        <div class="bundle-sub">All 6 subjects — save 40%</div>
+      </div>
+      <button class="bundle-btn">Coming Soon</button>
+    </div>
+  </div>
+</div>
+
+<!-- SUBJECTS -->
+<div id="subjects" class="screen">
+  <div class="sticky-header">
+    <div class="back-btn" onclick="goHome()">←</div>
+    <div class="header-info">
+      <div class="header-title" id="subjects-title">PPL Subjects</div>
+      <div class="header-sub">Choose a subject to practise</div>
+    </div>
+  </div>
+  <div class="subjects-list" id="subjects-list"></div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz" class="screen">
+  <div class="quiz-header">
+    <div class="quiz-top">
+      <div class="back-btn" onclick="goSubjects(currentExam)">←</div>
+      <div class="quiz-meta">
+        <div class="quiz-subject-label" id="ql-subject"></div>
+        <div class="quiz-counter" id="ql-counter"></div>
+      </div>
+      <div class="score-display" id="ql-score"></div>
+    </div>
+    <div class="progress-track"><div class="progress-bar" id="progress-bar"></div></div>
+    <div class="live-score-bar">
+      <div class="live-score-label" id="live-pct-label">Score: 0%</div>
+      <div class="live-score-track">
+        <div class="live-score-fill" id="live-score-fill" style="width:0%;background:var(--grey);"></div>
+        <div class="pass-line"></div>
+      </div>
+    </div>
+  </div>
+  <div class="quiz-body">
+    <div class="q-number" id="q-number"></div>
+    <div class="q-text" id="q-text"></div>
+    <div class="options" id="options"></div>
+    <div class="feedback-box" id="feedback-box">
+      <div class="fb-title" id="fb-title"></div>
+      <div class="fb-body" id="fb-body"></div>
+    </div>
+    <button class="next-btn" id="next-btn" onclick="nextQ()"></button>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div id="results" class="screen">
+  <div class="results-inner">
+    <div class="results-back"><div class="back-btn" onclick="goSubjects(currentExam)">←</div></div>
+    <div class="result-emoji" id="res-emoji"></div>
+    <div class="result-title" id="res-title"></div>
+    <div class="result-sub" id="res-sub"></div>
+    <div class="score-circle">
+      <svg viewBox="0 0 160 160">
+        <circle class="track" cx="80" cy="80" r="68"/>
+        <circle class="pass-mark" cx="80" cy="80" r="68" stroke-dasharray="6 4" stroke-dashoffset="0" id="pass-ring"/>
+        <circle class="fill" cx="80" cy="80" r="68" id="score-ring" stroke-dasharray="427" stroke-dashoffset="427"/>
+      </svg>
+      <div class="score-pct" id="res-pct"></div>
+      <div class="score-lbl">SCORE</div>
+    </div>
+    <div class="pass-label">
+      <div class="pass-dot" id="pass-dot"></div>
+      <span id="pass-text">Pass mark: 70%</span>
+    </div>
+    <div class="stats-row">
+      <div class="stat"><div class="stat-n g" id="res-correct"></div><div class="stat-label">Correct</div></div>
+      <div class="stat"><div class="stat-n r" id="res-wrong"></div><div class="stat-label">Wrong</div></div>
+    </div>
+    <div class="result-actions">
+      <button class="btn-primary" onclick="replayQuiz()">Try Again</button>
+      <button class="btn-secondary" onclick="goSubjects(currentExam)">← Back to Subjects</button>
+      <button class="btn-secondary" onclick="goHome()">Home</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SUBJECTS = {
+  PPL: [
+    {id:'air-law',name:'Air Law',icon:'⚖️',count:110,locked:false,desc:'KCAA regulations, airspace, licences'},
+    {id:'met',name:'Meteorology',icon:'🌦️',count:0,locked:true,desc:'Weather, METAR, TAF, tropical wx'},
+    {id:'nav',name:'Navigation',icon:'🧭',count:0,locked:true,desc:'Charts, VOR, dead reckoning'},
+    {id:'agk',name:'Aircraft General Knowledge',icon:'✈️',count:0,locked:true,desc:'Systems, instruments, engines'},
+    {id:'perf',name:'Flight Performance & Planning',icon:'📊',count:0,locked:true,desc:'W&B, fuel, performance charts'},
+    {id:'human',name:'Human Performance',icon:'🧠',count:0,locked:true,desc:'Hypoxia, fatigue, stress, vision'},
+  ]
+};
+
+const QUESTIONS = {};
+QUESTIONS['air-law'] = [["Which of the following documents have to be on board for an international flight?", ["Certificate of aircraft registration, Certificate of airworthiness, Airplane logbook, Appropriate papers for every crew member, Technical logbook", "Certificate of aircraft registration, Certificate of airworthiness, Airworthiness review certificate, EASA Form-1", "Certificate of aircraft registration, Certificate of airworthiness, Airplane logbook, Technical logbook", "Certificate of airworthiness, EASA Form-1, Airplane logbook, Technical logbook, Appropriate papers for crew"], 0], ["Which area could be crossed with certain restrictions?", ["Dangerous area", "Restricted area", "Prohibited area", "No-fly zone"], 1], ["Where can the type of restriction for a restricted airspace be found?", ["AIC", "AIP", "ICAO chart 1:500,000", "NOTAM"], 1], ["What is the definition of 'scheduled flights'?", ["Flights which transport persons or objects periodically and publicly on certain routes", "Flights with a flight plan", "Flights which cross national borders", "Flights which require flight preparation and route planning"], 0], ["What is the status of rules and procedures created by the EASA (e.g. Part-FCL, Part-MED)?", ["They are part of EU regulation and legally binding to all EU member states", "They are not legally binding, they only serve as a guide", "They have the same status as ICAO Annexes", "Only after ratification by individual EU member states they are legally binding"], 0], ["Which validity does the 'Certificate of Airworthiness' have?", ["6 months", "12 months", "Unlimited", "12 years"], 2], ["What is the meaning of the abbreviation 'ARC'?", ["Airspace Restriction Criteria", "Airworthiness Recurring Control", "Airworthiness Review Certificate", "Airspace Rulemaking Committee"], 2], ["The 'Certificate of Airworthiness' is issued by the state...", ["in which the aircraft is registered.", "in which the aircraft is constructed.", "of the residence of the owner.", "in which the airworthiness review is done."], 0], ["A pilot license issued in accordance with ICAO Annex 1 is valid in...", ["those countries that have accepted this license on application.", "the country where the license was issued.", "the country where the license was acquired.", "all ICAO countries."], 3], ["What is the subject of ICAO Annex 1?", ["Air traffic services", "Rules of the air", "Operation of aircraft", "Flight crew licensing"], 3], ["What is the period of validity of a private pilot license (PPL)?", ["24 months", "48 months", "60 months", "Unlimited"], 3], ["What is the minimum age to obtain a private pilot license?", ["18 years", "17 years", "21 years", "16 years"], 1], ["What are the minimum requirements to acquire a rating for VFR night flights?", ["At least 5 hours at night, four with instructor, 1hr XC, 5 solo take-offs and landings", "At least 5 hours at night, three with instructor, 1hr XC, 5 solo take-offs and landings", "At least 5 hours at night, three with instructor, 1hr XC, 10 solo take-offs and landings", "At least 10 hours at night, three with instructor, 1hr XC, 5 solo take-offs and landings"], 1], ["The validity of a medical examination certificate class 2 for a 62 year old pilot is...", ["60 months.", "48 months.", "24 months.", "12 months."], 3], ["In which way is a SEP (land) rating renewed if you do not meet the required flight time?", ["Required flight experience accumulated under supervision of a flight instructor", "The ATO can renew the rating after a training flight with a flight instructor", "Several training flights under supervision of an ATO", "A proficiency check with an examiner"], 3], ["The possession of a European PPL(A) entitles the holder to...", ["act as PIC, only for aircraft MTOW max 2000kg may receive compensation", "act as PIC on non-commercial flights without compensation and receive compensation as flight instructor", "act as pilot in commercial and non-commercial flights with single engine aircraft", "act as pilot on commercial flight when at most 4 people on board"], 1], ["What is the minimum age to start a private pilot training at a flight school?", ["16 years", "18 years", "21 years", "17 years"], 0], ["What is the meaning of the abbreviation 'SERA'?", ["Selective Radar Altimeter", "Standardized European Rules of the Air", "Specialized Radar Approach", "Standard European Routes of the Air"], 1], ["What is the meaning of the abbreviation 'TRA'?", ["Transponder Area", "Temporary Reserved Airspace", "Terminal Area", "Temporary Radar Routing Area"], 1], ["What has to be considered when entering an RMZ?", ["To permanently monitor the radio and if possible establish radio contact", "Transponder switched on Mode C and squawk 7000", "Obtain a clearance from the local aviation authority", "Obtain a clearance to enter this area"], 0], ["What condition has to be met during a Special VFR flight?", ["Visual reference to the terrain", "A minimum distance to clouds of 2000 m", "Speed not above 115 kt IAS", "At least 500 m ground visibility"], 0], ["What has to be done before entering a TMZ?", ["File a flight plan before the flight", "Switch on the transponder and activate mode A and C or mode S", "Request a clearance before entering", "Switch on the transponder, activate mode A, and squawk IDENT"], 1], ["What is the meaning of an area marked as 'TMZ'?", ["Traffic Management Zone", "Touring Motorglider Zone", "Transponder Mandatory Zone", "Transportation Management Zone"], 2], ["According to ICAO Annex 2, 'aerodrome traffic' is defined as:", ["All traffic on the movement area and all aircraft flying in the vicinity", "All traffic on the manoeuvring area and all aircraft flying in the vicinity except aircraft in visual circuit", "All traffic on the manoeuvring area and all aircraft flying in the vicinity of an aerodrome", "All traffic on apron and manoeuvring area and all aircraft flying in the vicinity"], 2], ["What is the meaning of the abbreviation 'IFR'?", ["Commercial Flight Rules", "Instrument Meteorological Conditions", "Bad Weather Flight Rules", "Instrument Flight Rules"], 3], ["A flight is called a 'visual flight', if the...", ["flight is conducted in visual meteorological conditions.", "visibility in flight is more than 8 km.", "visibility in flight is more than 5 km.", "flight is conducted under visual flight rules."], 3], ["What is the meaning of the abbreviation 'VMC'?", ["Variable meteorological conditions", "Instrument flight conditions", "Visual meteorological conditions", "Visual flight rules"], 2], ["What is the meaning of the abbreviation 'IMC'?", ["Instrument flight rules", "Instrument meteorological conditions", "Inter meteorological conditions", "Instrument conditions"], 1], ["What is the minimum height above an industrial site working with inflammables and explosives?", ["1000 ft above highest obstacle within radius of 600 m", "1000 ft above highest obstacle within radius of 300 m", "500 ft AGL", "2000 ft AGL"], 0], ["Two engine-driven aircraft are flying on crossing courses at the same altitude. Which one has to divert?", ["Both have to divert to the left", "The heavier one has to climb", "The lighter one has to climb", "Both have to divert to the right"], 3], ["While taxiing, two engine-driven aeroplanes face each other on opposite courses. Which one has to divert?", ["Both have to divert to the left", "The heavier one has to divert to the right", "Both have to divert to the right", "The heavier one has to divert to the left"], 2], ["Two aeroplanes are flying on crossing tracks. Which one has to divert?", ["The aircraft flying from left to right has priority", "Both have to divert to the left", "Both have to divert to the right", "The aircraft flying from right to left has priority"], 3], ["What is the difference between 'crossing' and 'passing' regarding two aeroplanes?", ["When crossing, angle is more than 70 degrees; when passing, it is smaller", "When crossing, angle is less than 70 degrees; when passing, it is bigger", "If the difference in speed is more than 30 kt, it is called passing", "If both pilots can see each other through a side window, it is called crossing"], 0], ["In airspace D, a Boeing 737 and a Cessna 152 are on crossing courses. Which has to divert?", ["The aeroplane flying from right to left has priority, the other has to divert", "ATC has to decide which one has to divert", "The Boeing 737, because an airliner has greater power reserves", "The Cessna 152, because IFR and commercial flights have priority"], 0], ["Which of the following is NOT a sufficient reason to fly below the required minimum height?", ["Take-off or landing at an aerodrome", "The drop of towed objects at an aerodrome", "Bad weather conditions in the vicinity of an aerodrome", "An approach without landing at an aerodrome"], 2], ["Which statement concerning rules of priority is NOT correct?", ["Touring motor gliders with shut-down engine have priority over engine-powered aircraft", "Engine-powered aircraft have priority over engine-powered gliders", "Landing aircraft have priority over starting aircraft", "Aircraft in distress always have priority"], 1], ["A single-engine piston and a turboprop aeroplane are approaching each other at the same altitude. Which has to change track?", ["Both aircraft have to alter their tracks to the right", "Both aircraft have to alter their tracks to the left", "The single-engine piston aircraft has to give way to the turboprop", "The turboprop aircraft has to give way to the single-engine piston"], 0], ["Which distances to clouds must be maintained during a VFR flight in airspaces C, D and E?", ["1500 m horizontally, 1000 ft vertically", "1500 m horizontally, 1000 m vertically", "1000 m horizontally, 300 m vertically", "1000 m horizontally, 1500 ft vertically"], 0], ["The minimum flight visibility at 5000 ft MSL in airspace B for VFR flights is...", ["1500 m", "3000 m", "8000 m", "5000 m"], 2], ["What is the minimum flight visibility in airspace C for a VFR aircraft at 5000 ft MSL?", ["5000 m", "3000 m", "8000 m", "1500 m"], 2], ["What is the minimum flight visibility in airspace C for a VFR aircraft at 7000 ft MSL?", ["3000 m", "1500 m", "8000 m", "5000 m"], 2], ["What is the minimum flight visibility in airspace C for a VFR aircraft at FL110?", ["8000 m", "3000 m", "1500 m", "5000 m"], 0], ["What is the minimum flight visibility in airspace C for a VFR aircraft at FL125?", ["3000 m", "8000 m", "5000 m", "1500 m"], 1], ["What are the minimum distances to clouds for a VFR flight in airspace B?", ["Horizontally 1000 m, vertically 300 m", "Horizontally 1000 m, vertically 1500 ft", "Horizontally 1500 m, vertically 1000 m", "Horizontally 1500 m, vertically 300 m"], 0], ["What is the minimum flight visibility in airspace C below FL100 for a VFR aircraft?", ["5 km", "1.5 km", "8 km", "10 km"], 0], ["What is the minimum flight visibility in airspace C at and above FL100 for a VFR aircraft?", ["10 km", "5 km", "1.5 km", "8 km"], 3], ["The term 'ceiling' is defined as the...", ["height of base of highest layer covering more than half the sky below 20000 ft", "height of base of lowest layer covering more than half the sky below 10000 ft", "altitude of base of lowest layer covering more than half the sky below 20000 ft", "height of base of lowest layer covering more than half the sky below 20000 ft"], 3], ["Minimum weather conditions to enter a control zone (airspace D) under Special VFR for a fixed-wing aircraft?", ["Ground/Flight visibility 800m, ceiling not below 600ft, clear of clouds, visual contact with ground", "Ground/Flight visibility 5km, ceiling not below 1500ft, clear of clouds, visual contact with ground", "Ground/Flight visibility 1.5km, ceiling not below 600ft, clear of clouds, visual contact with ground", "Ground/Flight visibility 1.5km, ceiling not below 1000ft, clear of clouds, visual contact with ground"], 0], ["Being intercepted by a military aircraft: aileron movement then smooth turn to the left means...", ["Follow me", "Prepare for safety landing, you entered a prohibited area", "You are entering a restricted area, leave immediately", "You are clear of restricted airspace, continue on heading"], 0], ["Being intercepted by a military aircraft: sudden 90-degree heading change and pull-up means...", ["You are entering a restricted area, leave immediately", "You may continue your flight", "Follow me, I will bring you to the next airfield", "Prepare for safety landing, you entered a prohibited area"], 1], ["The altimeter is switched from local QNH to 1013.25 hPa...", ["when descending below FL 100.", "when climbing above the transition altitude.", "at 4000 ft.", "at the decision height."], 1], ["During a flight at FL 80, the altimeter setting has to be...", ["1013.25 hPa.", "local QFE.", "1030.25 hPa.", "local QNH."], 0], ["What is the purpose of the semi-circular rule?", ["To fly without a filed flight plan in prescribed zones", "To avoid collisions by suspending turning manoeuvres", "To allow safe climbing or descending in a holding pattern", "To avoid collisions by reducing probability of opposing traffic at the same altitude"], 3], ["Which of the following options are possible SSR-Transponder modes?", ["B, R, S", "B, C, V", "A, C, R", "A, C, S"], 3], ["A transponder with the ability to send the current pressure level is a...", ["pressure-decoder.", "mode C or S transponder.", "transponder approved for airspace B.", "mode A transponder."], 1], ["Which transponder code indicates a loss of radio communication?", ["7000", "2000", "7600", "7700"], 2], ["Which transponder code should be set during a radio failure without any request?", ["7500", "7600", "7700", "7000"], 1], ["Which transponder code has to be set unrequested during an emergency?", ["7700", "7600", "7500", "7000"], 0], ["The 'IDENT' button on the transponder has to be used...", ["only once after a direct request by ATC.", "without request before entering airspace C, D or E.", "without request before entering a CTA.", "three times to indicate a radio failure."], 0], ["Which air traffic service is responsible for the safe conduct of flights?", ["FIS (flight information service)", "ATC (air traffic control)", "AIS (aeronautical information service)", "ALR (alerting service)"], 1], ["Air traffic control service is conducted by which services?", ["TWR (aerodrome control), APP (approach control), ACC (area control)", "FIS, AIS, AFS", "APP, ACC, FIS", "ALR, SAR, TWR"], 0], ["Which answer is correct with regard to separation in airspace E?", ["VFR traffic is separated from VFR and IFR traffic", "IFR traffic is separated only from VFR traffic", "VFR traffic is not separated from any other traffic", "VFR traffic is separated only from IFR traffic"], 2], ["Which air traffic services can be expected within an FIR (flight information region)?", ["ATC and FIS", "ATC and AIS", "FIS and ALR", "AIS and SAR"], 2], ["A pilot can contact FIS (flight information service)...", ["by a personal visit.", "via internet.", "via radio communication.", "via telephone."], 2], ["What is the correct phrase regarding wake turbulence for a light aircraft following a heavier one?", ["Caution wake turbulence", "Danger jet blast", "Attention propwash", "Be careful wake winds"], 0], ["Which of the following options states a correct position report?", ["DEABC over N in FL 2500 ft", "DEABC over N at 35", "DEABC, N, 2500 ft", "DEABC reaching N"], 2], ["What is the meaning of the abbreviation 'AIREP'?", ["Aeronautical instrument requirement report", "Aeronautical information report", "Aircraft report", "Automatic identification report"], 2], ["What information is provided in the general part (GEN) of the AIP?", ["Access restrictions, passenger controls, pilot requirements, license samples and validity periods", "Warnings for aviation, ATS airspaces and routes, restricted and dangerous airspaces", "Table of content, classification of airfields with maps, approach charts, taxi charts", "Map icons, list of radio nav aids, sunrise/sunset times, airport fees, ATC fees"], 3], ["Which are the different parts of the Aeronautical Information Publication (AIP)?", ["GEN, COM, MET", "GEN, ENR, AD", "GEN, MET, RAC", "GEN, AGA, COM"], 1], ["What information is provided in the part 'AD' of the AIP?", ["Table of content, classification of airfields with maps, approach charts, taxi charts", "Map icons, list of radio nav aids, sunrise/sunset times, airport fees, ATC fees", "Access restrictions, passenger controls, pilot requirements, license samples and validity", "Warnings for aviation, ATS airspaces and routes, restricted and dangerous airspaces"], 0], ["The NOTAM A1024/13 LOWW B)1305211200 C)1305211400 is valid until...", ["13/10/2013 00:00 UTC.", "21/05/2013 14:00 UTC.", "13/05/2013 12:00 UTC.", "21/05/2014 13:00 UTC."], 1], ["A Pre-Flight Information Bulletin (PIB) is a presentation of current...", ["ICAO information of operational significance prepared after the flight.", "NOTAM information of operational significance prepared prior to flight.", "AIP information of operational significance prepared prior to flight.", "AIC information of operational significance prepared after the flight."], 1], ["The term 'aerodrome elevation' is defined as...", ["the lowest point of the landing area.", "the highest point of the landing area.", "the highest point of the apron.", "the average value of the height of the manoeuvring area."], 1], ["The term 'runway' is defined as a...", ["rectangular area on a land or water aerodrome prepared for landing and take-off of aircraft.", "rectangular area on a land aerodrome prepared for landing and take-off of helicopters.", "round area on an aerodrome prepared for landing and take-off of aircraft.", "rectangular area on a land aerodrome prepared for landing and take-off of aircraft."], 3], ["Which statement is correct with regard to the term 'taxi holding point'?", ["An area where aircraft must stop unless further permission to proceed is given", "Designed to indicate beginning of safety area, may be crossed when taxi clearance given", "Only to be observed for IFR traffic if instrument weather conditions are prevailing", "The point at which the aircraft must stop unless further permission to proceed is given"], 3], ["What information is provided by a SNOWTAM?", ["Notifications of runway/taxiway/apron status with respect to snow, ice, and standing water", "Information which cannot be listed in the AIP", "Special NOTAM, especially urgent NOTAM information", "Special information on recent changes on ICAO maps"], 0], ["What does the reported runway condition 'WET' mean?", ["Surface is soaked but no significant patches of standing water", "Runway is clear of water, ice, and snow", "A large part of the surface is flooded", "Some water patches are visible"], 0], ["What does the reported runway condition 'DAMP' mean?", ["Runway is clear of water, ice, and snow", "Wet surface but no significant puddles are visible", "A large part of the surface is flooded", "Change of colour on the surface due to moisture"], 3], ["What does 'WATER PATCHES' mean regarding the reported runway condition?", ["Wet surface but no significant patches are visible", "Runway is clear of water, ice, and snow", "A large part of the surface is flooded", "Patches of standing water are visible"], 3], ["How can a wind direction indicator be marked for better visibility?", ["Located on a big black surface", "Surrounded by a white circle", "Mounted on top of the control tower", "Made from green materials"], 1], ["What is the meaning of a flashing red light signal directed to an aircraft in flight?", ["Return for landing, followed by steady green at the appropriate time", "Airport unsafe, do not land", "Cleared to land", "Give way to other aircraft and continue circling"], 1], ["What is the meaning of a flashing green light signal directed to an aircraft in flight?", ["Return for landing, followed by steady green at the appropriate time", "Give way to other aircraft and continue circling", "Cleared to land", "Airport unsafe, do not land"], 2], ["What is the meaning of a steady green light signal directed to an aircraft in flight?", ["Return for landing, followed by steady green at the appropriate time", "Airport unsafe, do not land", "Cleared to land", "Give way to other aircraft and continue circling"], 2], ["What is the meaning of a flashing white light directed to an aircraft on the ground?", ["Cleared for take-off", "Return to starting point", "Cleared to taxi", "Clear the taxiway / runway"], 1], ["What is the meaning of a flashing red light directed to an aircraft on the ground?", ["Cleared to taxi", "Immediately taxi clear of runway in use", "Return to starting point", "Cleared for take-off"], 1], ["What is the meaning of a flashing green light directed to an aircraft on the ground?", ["Cleared for take-off", "Cleared to taxi", "Land at this airport and proceed to the apron", "Return to starting point"], 1], ["Of what shape is a landing direction indicator?", ["A straight arrow", "An angled arrow", "T", "L"], 2], ["What is the purpose of the signal square at an aerodrome?", ["Contains special symbols to indicate aerodrome conditions visually to over-flying aircraft", "A specially marked area to pick up or drop towing objects", "Aircraft taxi here to get light signals for taxi and take-off clearance", "Illuminated area where search, rescue and fire fighting vehicles are placed"], 0], ["In which way should a pilot confirm received light signals in flight?", ["Apply some changes of RPM", "Apply some changes of the rudder", "Rock the wings (in the daytime)", "Apply some fast pitch changes"], 2], ["What is the meaning of a steady red light directed to an aircraft on the ground?", ["Return to starting point", "Land at this airport and proceed to apron", "Stop", "Clear the taxiway / runway"], 2], ["How are two parallel runways designated?", ["Left runway gets suffix L, right runway remains unchanged", "Left runway gets suffix -1, right runway -2", "Left runway remains unchanged, right runway designator increased by 1", "Left runway gets suffix L, right runway R"], 3], ["According to ICAO Annex 14, what is the colour marking of a runway?", ["Yellow", "Blue", "Green", "White"], 3], ["What is indicated by longitudinal stripes disposed symmetrically about the centreline of a runway?", ["At this point the ILS glide path hits the runway", "Do not touch down behind them", "Do not touch down before them", "A ground roll could be started from this position"], 2], ["Which runway designators are correct for 2 parallel runways?", ["18 and 18-2", "26 and 26R", "06L and 06R", "24 and 25"], 2], ["What is a 'PAPI' (Precision Approach Path Indicator)?", ["An instrumental aid providing guidance for correct approach", "A visual aid for correct departure track when departing", "A visual aid to help tower controller acquire correct approach", "A visual aid to help pilot acquire and maintain the correct glidepath"], 3], ["An aerodrome beacon (ABN) is a...", ["rotating beacon at airport to indicate its location to pilots from the air.", "rotating beacon at beginning of final approach to indicate location to pilots.", "fixed beacon at airport to indicate its location to pilots from the air.", "rotating beacon at airport to indicate location to pilots from the ground."], 0], ["Which is the colour of runway edge lights?", ["Red", "White", "Blue", "Green"], 1], ["Which is the colour of runway end lights?", ["White", "Red", "Blue", "Green"], 1], ["What is shown on an aerodrome sign with a yellow letter A on a black background?", ["Taxiway A", "Parking position A", "Point A on a taxiway", "Part A of the runway"], 0], ["What is the meaning of a runway sign showing an arrow with 2500 m?", ["2500 m in stated direction till reaching the parking area", "2500 m in stated direction till reaching the departure point of the runway", "From this intersection the complete runway length is 2500 m in stated direction", "From this intersection the available runway length is 2500 m in stated direction"], 3], ["What is the meaning of a yellow cross on red ground signal in the aerodrome signal area?", ["Prohibition on landing for a longer period.", "Caution, manoeuvring area is poor.", "Ground movement restricted to hard surfaces.", "After take-off and before landing all turns have to be made to the right."], 0], ["What is the meaning of a white cross-shaped ground signal at an aerodrome?", ["Landing prohibited for a longer period", "Glider flying is in progress", "After take-off and before landing all turns have to be made to the right", "Caution, manoeuvring area is poor"], 1], ["What is the meaning of a right-pointing arrow ground signal at an aerodrome?", ["Prohibition on landing for a longer period", "Caution, manoeuvring area is poor", "Ground movement restricted to hard surfaces", "After take-off and before landing all turns have to be made to the right"], 3], ["What is the meaning of 'DETRESFA'?", ["Alerting phase", "Distress phase", "Rescue phase", "Uncertainty phase"], 1], ["Who provides search and rescue service?", ["International approved organisations only", "Both military and civil organisations", "Only civil organisations", "Only military organisations"], 1], ["Which meaning does the search and rescue signal 'X' have when displayed on the ground?", ["Unable to proceed", "Need food and water", "Indicates the direction to proceed", "Send a doctor"], 3], ["Which meaning does the search and rescue signal 'V' have when displayed on the ground?", ["Indicates the direction to proceed", "Serious injuries, send a doctor", "Unable to proceed", "Need help"], 3], ["How can a pilot confirm a search and rescue ground signal from the air?", ["Push the rudder in both directions multiple times", "Deploy and retract the landing flaps multiple times", "Rock the wings", "Fly in a parabolic flight path multiple times"], 2], ["What are the three categories regarding aircraft occurrences?", ["Incident, Serious incident, Accident", "Event, Crash, Disaster", "Happening, Event, Serious event", "Event, Serious event, Accident"], 0], ["What is the primary purpose of an aircraft accident investigation?", ["To work for the public prosecutor and help follow-up flight accidents", "To determine the guilty party and draw legal consequences", "To identify the reasons and work out safety recommendations", "To clarify questions of liability for passenger compensation"], 2]];
+
+let currentExam = 'PPL';
+let currentSubjectId = '';
+let currentSubjectName = '';
+let quiz = [];
+let qi = 0;
+let score = 0;
+let answered = false;
+
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.getElementById(id).scrollTop = 0;
+}
+
+function goHome(){show('home');}
+
+function goSubjects(exam){
+  currentExam = exam;
+  const subs = SUBJECTS[exam];
+  document.getElementById('subjects-title').textContent = exam + ' — Subjects';
+  const list = document.getElementById('subjects-list');
+  list.innerHTML = subs.map(s => `
+    <div class="subject-row ${s.locked?'locked':''}" ${!s.locked?`onclick="startQuiz('${s.id}','${s.name}')"`:''} >
+      <div class="subj-icon ${s.locked?'locked-icon':'unlocked'}">${s.icon}</div>
+      <div class="subj-body">
+        <div class="subj-name">${s.name}</div>
+        <div class="subj-meta">${s.locked?'🔒 Coming soon':s.desc}</div>
+      </div>
+      <div class="subj-right">
+        ${s.locked
+          ? '<span class="coming-badge">Soon</span>'
+          : `<span class="subj-count">${s.count} Qs</span><span class="subj-arrow">›</span>`
+        }
+      </div>
+    </div>
+  `).join('');
+  show('subjects');
+}
+
+function startQuiz(id, name){
+  currentSubjectId = id;
+  currentSubjectName = name;
+  let qs = [...(QUESTIONS[id]||[])];
+  // Shuffle
+  for(let i=qs.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [qs[i],qs[j]]=[qs[j],qs[i]];
+  }
+  quiz = qs;
+  qi = 0;
+  score = 0;
+  document.getElementById('ql-subject').textContent = name;
+  show('quiz');
+  renderQ();
+}
+
+function renderQ(){
+  answered = false;
+  const q = quiz[qi];
+  const total = quiz.length;
+  const pct = Math.round((qi/total)*100);
+
+  document.getElementById('q-number').textContent = `QUESTION ${qi+1} OF ${total}`;
+  document.getElementById('ql-counter').textContent = `${qi+1} / ${total}`;
+  document.getElementById('ql-score').textContent = `✓ ${score}`;
+  document.getElementById('q-text').textContent = q[0];
+  document.getElementById('progress-bar').style.width = pct+'%';
+
+  const letters = ['A','B','C','D'];
+  document.getElementById('options').innerHTML = q[1].map((opt,i)=>`
+    <button class="opt" onclick="pick(${i})" id="opt${i}">
+      <div class="opt-letter">${letters[i]}</div>
+      <div class="opt-text">${opt}</div>
+      <div class="opt-check" id="chk${i}"></div>
+    </button>
+  `).join('');
+
+  const fb = document.getElementById('feedback-box');
+  fb.className = 'feedback-box';
+  document.getElementById('next-btn').className = 'next-btn';
+}
+
+function updateLiveScore(){
+  if(qi===0) return;
+  const pct = Math.round((score/qi)*100);
+  const fill = document.getElementById('live-score-fill');
+  const lbl = document.getElementById('live-pct-label');
+  if(!fill||!lbl) return;
+  fill.style.width = pct+'%';
+  fill.style.background = pct>=70?'var(--green)':pct>=50?'var(--gold)':'var(--red)';
+  lbl.textContent = 'Score: '+pct+'%';
+  lbl.style.color = pct>=70?'var(--green)':pct>=50?'var(--gold)':'var(--red)';
+}
+
+function pick(i){
+  if(answered) return;
+  answered = true;
+  const q = quiz[qi];
+  const correct = q[2];
+  const isRight = i === correct;
+  if(isRight) score++;
+
+  document.querySelectorAll('.opt').forEach((el,idx)=>{
+    el.classList.add('done');
+    if(idx===correct){
+      el.classList.add(idx===i?'correct':'show-correct');
+      document.getElementById('chk'+idx).textContent = '✓';
+    } else if(idx===i && !isRight){
+      el.classList.add('wrong');
+      document.getElementById('chk'+idx).textContent = '✗';
+    }
+  });
+
+  updateLiveScore();
+
+  const fb = document.getElementById('feedback-box');
+  document.getElementById('fb-title').textContent = isRight ? '✅ Correct!' : '❌ Incorrect';
+  document.getElementById('fb-body').textContent = isRight
+    ? 'Great job! Keep going.'
+    : 'The correct answer is '+['A','B','C','D'][correct]+': '+q[1][correct];
+  fb.className = 'feedback-box show '+(isRight?'ok':'nope');
+
+  const nb = document.getElementById('next-btn');
+  nb.textContent = qi+1 >= quiz.length ? '🏁 See Results' : 'Next Question →';
+  nb.className = 'next-btn show';
+}
+
+function nextQ(){
+  qi++;
+  if(qi >= quiz.length){ showResults(); return; }
+  renderQ();
+  document.getElementById('quiz').scrollTop = 0;
+}
+
+function showResults(){
+  const total = quiz.length;
+  const pct = Math.round((score/total)*100);
+  const passed = pct >= 70;
+
+  document.getElementById('res-pct').textContent = pct+'%';
+  document.getElementById('res-correct').textContent = score;
+  document.getElementById('res-wrong').textContent = total-score;
+
+  // Colour the ring based on pass/fail
+  const ring = document.getElementById('score-ring');
+  if(ring){
+    const circumference = 427;
+    const offset = circumference - (circumference * pct / 100);
+    ring.style.stroke = passed?'var(--green)':pct>=50?'var(--gold)':'var(--red)';
+    setTimeout(()=>{ ring.style.strokeDashoffset = offset; }, 120);
+  }
+
+  // Pass/fail label
+  const passText = document.getElementById('pass-text');
+  const passDot = document.getElementById('pass-dot');
+  if(passText && passDot){
+    if(passed){
+      passText.textContent = 'PASSED — Above 70% Kenya pass mark';
+      passDot.classList.add('passed');
+    } else {
+      passText.textContent = 'Below 70% pass mark — need '+(70-pct)+'% more';
+      passDot.classList.remove('passed');
+    }
+  }
+
+  let emoji,title,sub;
+  if(pct>=90){emoji='🏆';title='OUTSTANDING!';sub='Top of the class. Cleared for take-off!';}
+  else if(pct>=70){emoji='✅';title='PASSED!';sub='Above the 70% Kenya pass mark. Well done!';}
+  else if(pct>=50){emoji='📚';title='NEARLY THERE';sub='Just below pass mark — review and retry.';}
+  else{emoji='✈️';title='KEEP STUDYING';sub='Every pilot starts on the ground. Keep going!';}
+
+  document.getElementById('res-emoji').textContent = emoji;
+  document.getElementById('res-title').textContent = title;
+  document.getElementById('res-sub').textContent = sub;
+  show('results');
+}
+
+function replayQuiz(){
+  startQuiz(currentSubjectId, currentSubjectName);
+}
+</script>
+</body>
+</html>
